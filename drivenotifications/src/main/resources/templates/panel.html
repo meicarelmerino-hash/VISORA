@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control NTF | INFOTEC</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-guinda: #611232;
+            --color-guinda-claro: #801a42;
+            --color-dorado: #a57f2c;
+            --color-verde: #002f2a;
+            --color-fondo: #f0f2f5;
+            --color-texto-principal: #1a1f36;
+            --color-texto-secundario: #4f566b;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto-principal);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e6e8eb;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e6e8eb;
+            text-align: center;
+        }
+
+        .sidebar-logo {
+            max-width: 150px;
+            height: auto;
+        }
+
+        .sidebar-menu {
+            padding: 20px 10px;
+            flex-grow: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--color-texto-secundario);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-bottom: 5px;
+        }
+
+        .menu-item:hover {
+            background-color: #f6f8fa;
+            color: var(--color-guinda);
+        }
+
+        .menu-item.active {
+            background-color: rgba(97, 18, 50, 0.08);
+            color: var(--color-guinda);
+            font-weight: 600;
+        }
+
+        .menu-item .material-icons-round {
+            margin-right: 12px;
+            font-size: 1.3rem;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid #e6e8eb;
+            background-color: #fbfcfd;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .top-header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e6e8eb;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 1.4rem;
+            color: var(--color-verde);
+        }
+
+        .dashboard-wrapper {
+            padding: 30px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #e6e8eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            transition: transform 0.2s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        }
+
+        .kpi-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+        }
+
+        .kpi-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--color-guinda);
+            line-height: 1;
+        }
+
+        .kpi-label {
+            color: var(--color-texto-secundario);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+
+
+
+
+
+
+        
+
+        .registration-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid #e6e8eb;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--color-guinda);
+        }
+
+        .form-floating > .form-control {
+            border-radius: 10px;
+            border: 2px solid #eee;
+        }
+
+        .form-floating > .form-control:focus {
+            border-color: var(--color-guinda);
+            box-shadow: 0 0 0 0.25rem rgba(97, 18, 50, 0.1);
+        }
+
+        .table-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 10px;
+            border: 1px solid #e6e8eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .table-premium thead th {
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            color: var(--color-texto-secundario);
+            padding: 20px 15px;
+            background-color: white;
+            border-bottom: 2px solid #f0f2f5;
+        }
+
+        .table-premium tbody td {
+            padding: 18px 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        .resource-name {
+            font-weight: 600;
+            color: var(--color-texto-principal);
+            font-size: 0.95rem;
+        }
+
+        .type-badge {
+            font-size: 0.75rem;
+            padding: 5px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .status-badge {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .btn-action-group {
+            display: flex;
+            gap: 5px;
+            justify-content: flex-end;
+        }
+
+        .btn-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #eee;
+            background: white;
+            color: var(--color-texto-secundario);
+            transition: 0.2s;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .btn-action:hover {
+            border-color: #ddd;
+            background-color: #f6f8fa;
+        }
+
+        .btn-action.btn-delete:hover {
+            background-color: #fff5f5;
+            color: #c53030;
+            border-color: #feb2b2;
+        }
+
+        .btn-action.btn-monitor-active {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border-color: rgba(40, 167, 69, 0.2);
+        }
+
+        .btn-guinda {
+            background-color: var(--color-guinda);
+            color: white;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-guinda:hover {
+            background-color: var(--color-guinda-claro);
+            color: white;
+        }
+
+        .fs-7 { font-size: 0.85rem; }
+        .fs-8 { font-size: 0.75rem; }
+
+
+
+
+
+
+        /* Estilo para el botón de Google mejorado */
+        .btn-google-connect {
+            background-color: #ffffff;
+            color: #3c4043;
+            border: 1px solid #dadce0;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-google-connect:hover {
+            background-color: #f8f9fa;
+            border-color: #d2d4d7;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+            transform: translateY(-1px);
+            color: #202124;
+        }
+
+        /* Animación sutil para el icono de sincronización */
+        .registration-panel .material-icons-round.fs-1 {
+            animation: pulseSync 3s infinite ease-in-out;
+        }
+
+        @keyframes pulseSync {
+            0%, 100% { opacity: 0.5; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .letter-spacing-1 {
+            letter-spacing: 2px;
+        }
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img th:src="@{/images/INFOTEC_horizontal.png}" alt="INFOTEC Logo" class="sidebar-logo">
+        </div>
+        <nav class="sidebar-menu">
+            <a href="/panel" class="menu-item active">
+                <span class="material-icons-round">dashboard</span>
+                Panel Principal
+            </a>
+            
+            <a href="#" class="menu-item">
+                <span class="material-icons-round">description</span>
+                Reportes Drive
+            </a>
+
+            <a th:href="@{/usuarios/listar}" class="menu-item">
+                <span class="material-icons-round">group</span>
+                Gestión de Usuarios
+            </a>
+            
+            
+
+
+            <a th:href="@{/historial-alertas}" class="menu-item">
+                <span class="material-icons-round">notifications_active</span>
+                Historial Alertas
+            </a>
+
+
+
+
+            <a href="#" class="menu-item" id="configToggle" onclick="toggleConfigMenu(event)">
+                <span class="material-icons-round">settings</span>
+                Configuración
+                <span class="material-icons-round ms-auto" id="configArrow">expand_more</span>
+            </a>
+            <div id="configSubmenu" style="display: none; padding-left: 30px; background: #fbfcfd;">
+                <a th:href="@{/usuarios/mi-perfil}" class="menu-item" style="font-size: 0.85rem;">
+                    <span class="material-icons-round" style="font-size: 1.1rem;">person</span>
+                    Mi Perfil
+                </a>
+                <a th:href="@{/usuarios/configurar-telegram}" class="menu-item" style="font-size: 0.85rem;">
+                    <span class="material-icons-round" style="font-size: 1.1rem;">send</span>
+                    Telegram
+                </a>
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <img th:src="@{/images/td_horizontal.png}" alt="Transformación Digital" style="max-height: 25px;">
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <header class="top-header">
+            <h1 class="page-title">Plataforma de Notificaciones NTF</h1>
+            
+            <div class="d-flex align-items-center ms-auto">
+                <div class="d-flex align-items-center me-4">
+                    <div class="text-end me-3 d-none d-md-block">
+                        <div class="fw-bold" style="font-size: 0.9rem; color: var(--color-guinda);" 
+                            th:text="${usuarioActivo != null ? usuarioActivo.nombre : 'Usuario'}">Usuario</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Sesión Activa</div>
+                    </div>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                        style="width: 40px; height: 40px; background-color: var(--color-guinda); color: white; border: 2px solid var(--color-dorado);">
+                        <span class="material-icons-round">person</span>
+                    </div>
+                </div>
+
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 rounded-pill fw-bold">
+                        <span class="material-icons-round me-2" style="font-size: 1.1rem;">logout</span>
+                        Salir
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <div class="dashboard-wrapper">
+            
+            <div th:if="${mensaje}" class="alert alert-success custom-alert shadow-sm mb-4 border-start border-4 border-success">
+                <span class="material-icons-round me-2">check_circle</span>
+                <span th:text="${mensaje}"></span>
+            </div>
+            <div th:if="${error}" class="alert alert-danger custom-alert shadow-sm mb-4 border-start border-4 border-danger">
+                <span class="material-icons-round me-2">error</span>
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon-wrapper" style="background-color: rgba(0, 47, 42, 0.1); color: var(--color-verde);">
+                            <span class="material-icons-round" style="font-size: 2rem;">visibility</span>
+                        </div>
+                        <div>
+                            <div class="kpi-value" th:text="${totalVigilados}">0</div>
+                            <div class="kpi-label">Recursos Vigilados Actuales</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="kpi-card">
+                        <div class="kpi-icon-wrapper" style="background-color: rgba(165, 127, 44, 0.1); color: var(--color-dorado);">
+                            <span class="material-icons-round" style="font-size: 2rem;">cloud</span>
+                        </div>
+                        <div>
+                            <div class="kpi-value" th:text="${registrosDrive != null ? registrosDrive.size() : 0}">0</div>
+                            <div class="kpi-label">Recursos en Base de Datos</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${usuarioActivo.accessToken == null}" class="registration-panel shadow-lg overflow-hidden border-0 p-0">
+                <div class="row g-0">
+                    <div class="col-lg-4 d-none d-lg-flex align-items-center justify-content-center bg-light border-end">
+                        <div class="text-center p-4">
+                            <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
+                                <img th:src="@{/images/drive_icon.png}" alt="Drive" style="width: 80px; height: auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));">
+                                <span class="material-icons-round text-muted fs-1">sync</span>
+                                <img th:src="@{/images/INFOTEC_horizontal.png}" alt="Infotec" style="width: 100px; height: auto;">
+                            </div>
+                            <p class="text-muted small fw-bold text-uppercase letter-spacing-1">Sincronización Segura</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-8 p-5 text-center text-lg-start">
+                        <div class="mb-4">
+                            <img th:src="@{/images/google_icon.png}" alt="Google" style="height: 40px; width: auto;" class="mb-3">
+                            <h2 class="h3 mb-2" style="color: var(--color-verde);">Conecta tu Espacio de Trabajo</h2>
+                            <p class="text-secondary">Para comenzar a gestionar y monitorear tus recursos, es necesario vincular tu cuenta de Google Drive con la plataforma INFOTEC Drive.</p>
+                        </div>
+
+                        <div class="d-flex flex-column flex-sm-row gap-3">
+
+                            <a th:href="@{/auth/google/login}" 
+                            class="btn btn-lg px-4 rounded-pill shadow-sm d-flex align-items-center justify-content-center btn-google-connect">
+                                <img th:src="@{/images/drive_icon.png}" 
+                                    width="25" 
+                                    height="25" 
+                                    class="me-3" 
+                                    alt="Drive Icon">
+                                Vincular cuenta de Google Drive
+                            </a>
+                            <div class="d-flex align-items-center text-muted small ms-lg-3">
+                                <span class="material-icons-round fs-6 me-1 text-success">verified_user</span>
+                                Conexión cifrada
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div th:if="${usuarioActivo.accessToken != null}" class="registration-panel shadow-sm">
+                <div class="d-flex align-items-center mb-4 pb-2 border-bottom">
+                    <span class="material-icons-round me-3" style="color: var(--color-guinda); font-size: 1.8rem;">add_link</span>
+                    <h2 class="h5 m-0" style="color: var(--color-guinda); text-transform: uppercase; letter-spacing: 1px;">Registrar Nuevo Recurso</h2>
+                </div>
+                
+                <form th:action="@{/panel/guardar-drive}" method="post" class="row g-3 align-items-center">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <div class="col-md-9">
+                        <div class="form-floating">
+                            <input type="text" name="fileId" class="form-control" id="fileIdInput" placeholder="ID de Drive" required>
+                            <label for="fileIdInput">Introduzca el ID del archivo o carpeta</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-guinda btn-lg w-100 fw-bold">
+                            <span class="material-icons-round me-2 align-middle">add_circle</span>Vincular
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-panel shadow-sm">
+                <div class="d-flex justify-content-between align-items-center p-3">
+                    <h2 class="h5 m-0 p-2 border-start border-4 border-dorado" style="color: var(--color-verde);">REPOSITORIO DE RECURSOS</h2>
+                </div>
+                <form th:action="@{/panel/sincronizar}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-outline-success btn-sm rounded-pill d-inline-flex align-items-center">
+                        <span class="material-icons-round fs-6 me-1">sync</span>
+                        Sincronizar con Drive
+                    </button>
+                </form>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover table-premium align-middle">
+                        <thead>
+                            <tr>
+                                <th>Recurso / Nombre</th>
+                                <th>Tipo de Objeto</th>
+                                <th>Estado Monitoreo</th>
+                                <th>Identificador de Drive</th>
+                                <th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody th:if="${registrosDrive != null}">
+                            <th:block th:each="item : ${registrosDrive}">
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="material-icons-round me-3 fs-3" 
+                                                  th:style="'color:' + (${item.tipoDocumento == 'folder'} ? '#e67e22' : '#3498db')">
+                                                <th:block th:text="${item.tipoDocumento == 'folder'} ? 'folder' : 'description'"></th:block>
+                                            </span>
+                                            <span class="resource-name" th:text="${item.nombreDocumento}">Nombre</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span th:class="'type-badge bg-light text-dark border ' + (${item.tipoDocumento == 'folder'} ? 'text-warning' : 'text-primary')" th:text="${item.tipoDocumento}">
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="status-badge" 
+                                                th:style="'background-color:' + (${item.monitoreando != null && item.monitoreando} ? '#28a745' : '#dc3545')">
+                                            </span>
+                                            <span class="small fw-semibold text-muted" 
+                                                th:text="${item.monitoreando != null && item.monitoreando ? 'Activo' : 'Inactivo'}">
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td><code th:text="${item.driveId}" class="small text-muted">Drive ID</code></td>
+                                    <td>
+                                        <div class="btn-action-group">
+                                        
+
+                                            <button type="button" class="btn-action" title="Compartir Acceso"
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#modalCompartir"
+                                                    th:data-fileid="${item.driveId}"
+                                                    onclick="prepararModal(this)">
+                                                <span class="material-icons-round">person_add</span>
+                                            </button>
+
+                                            <th:block th:if="${item.monitoreando}">
+                                                <form th:action="@{/panel/detener-monitoreo}" method="post" class="d-inline">
+                                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                                    <input type="hidden" name="fileId" th:value="${item.driveId}" />
+                                                    <button type="submit" class="btn-action btn-monitor-active" title="Detener Vigilancia">
+                                                        <span class="material-icons-round">visibility_off</span>
+                                                    </button>
+                                                </form>
+                                            </th:block>
+
+                                            <th:block th:unless="${item.monitoreando}">
+                                                <form th:action="@{/panel/iniciar-monitoreo}" method="post" class="d-inline">
+                                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                                    <input type="hidden" name="fileId" th:value="${item.driveId}" />
+                                                    <button type="submit" class="btn-action" title="Activar Vigilancia">
+                                                        <span class="material-icons-round">visibility</span>
+                                                    </button>
+                                                </form>
+                                            </th:block>
+
+
+
+
+                                            <form th:action="@{/panel/permisos}" method="get" class="d-inline">
+                                                <input type="hidden" name="fileId" th:value="${item.driveId}" />
+                                                <button type="submit" class="btn-action" title="Listar Permisos de Acceso">
+                                                    <span class="material-icons-round">key</span>
+                                                </button>
+                                            </form>
+
+
+
+
+
+                                            <form th:action="@{/panel/eliminar}" method="post" class="d-inline" onsubmit="return confirm('¿Eliminar recurso?');">
+                                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                                <input type="hidden" name="driveId" th:value="${item.driveId}" />
+                                                <button type="submit" class="btn-action btn-delete">
+                                                    <span class="material-icons-round">delete</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                    <tr th:if="${fileIdConsultado == item.driveId}" style="background-color: #f8f9fa;">
+                                        <td colspan="5" class="p-0">
+                                            <div class="p-4 border-start border-4 border-dorado shadow-sm">
+
+                                                
+
+                                                <div class="d-flex gap-2 align-items-center mb-3">
+                                                    <h6 class="fw-bold text-dark m-0 me-auto">
+                                                        <span class="material-icons-round align-middle me-1">people</span> 
+                                                        Usuarios con Acceso Autorizado
+                                                    </h6>
+
+                                                    <form th:action="@{/panel/actualizar-todo}" method="post" class="d-inline">
+                                                        <input type="hidden" name="fileId" th:value="${fileIdConsultado}" />
+                                                        <input type="hidden" name="nuevoRol" value="reader" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-info rounded-pill d-flex align-items-center">
+                                                            <span class="material-icons-round fs-6 me-1">visibility</span> Todo Lectura
+                                                        </button>
+                                                    </form>
+
+                                                    <form th:action="@{/panel/actualizar-todo}" method="post" class="d-inline">
+                                                        <input type="hidden" name="fileId" th:value="${fileIdConsultado}" />
+                                                        <input type="hidden" name="nuevoRol" value="writer" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill d-flex align-items-center">
+                                                            <span class="material-icons-round fs-6 me-1">edit</span> Todo Edición
+                                                        </button>
+                                                    </form>
+
+                                                    <a href="/panel" class="btn btn-sm btn-secondary rounded-pill">Cerrar Detalle</a>
+                                                </div>
+
+                                                <div class="table-responsive bg-white rounded-3 border">
+                                                    <table class="table table-sm align-middle m-0">
+                                                        <thead class="table-light">
+                                                            <tr class="fs-8 text-muted text-uppercase">
+                                                                <th class="ps-3">Identidad / Correo</th>
+                                                                <th>Tipo / Alcance</th>
+                                                                <th>Nivel de Permiso</th>
+                                                                <th class="text-end pe-3">Acciones</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr th:each="p : ${permisos}">
+                                                                <td class="ps-3">
+                                                                    <div th:if="${p.type == 'anyone'}" class="d-flex align-items-center text-primary">
+                                                                        <span class="material-icons-round me-2">public</span>
+                                                                        <span class="fw-bold">Cualquier persona con el enlace</span>
+                                                                    </div>
+                                                                    <div th:unless="${p.type == 'anyone'}" class="d-flex align-items-center">
+                                                                        <span class="material-icons-round me-2 text-muted">alternate_email</span>
+                                                                        <span th:text="${p.emailAddress}" class="fw-medium"></span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="badge bg-light text-dark border px-2 py-1" th:text="${p.type}"></span>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="badge rounded-pill px-3" 
+                                                                        th:classappend="${p.role == 'owner' ? 'bg-success' : (p.role == 'writer' ? 'bg-warning text-dark' : 'bg-info text-white')}"
+                                                                        th:text="${p.role}"></span>
+                                                                </td>
+                                                                <td class="text-end pe-3">
+                                                                    <form th:if="${p.role != 'owner'}" th:action="@{/panel/actualizar}" method="post" class="d-flex gap-1 justify-content-end">
+                                                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                                                        <input type="hidden" name="fileId" th:value="${fileIdConsultado}" />
+                                                                        <input type="hidden" name="email" th:value="${p.emailAddress}" />
+                                                                        
+                                                                        <th:block th:if="${p.type == 'anyone'}">
+                                                                            <button th:formaction="@{/panel/restringir-acceso}" type="submit" class="btn btn-sm btn-outline-danger">
+                                                                                Restringir Acceso Público
+                                                                            </button>
+                                                                        </th:block>
+                                                                        
+                                                                        <th:block th:unless="${p.type == 'anyone'}">
+                                                                            <select name="role" class="form-select form-select-sm" style="width: auto;">
+                                                                                <option value="reader" th:selected="${p.role == 'reader'}">Lector</option>
+                                                                                <option value="commenter" th:selected="${p.role == 'commenter'}">Comentarista</option>
+                                                                                <option value="writer" th:selected="${p.role == 'writer'}">Editor</option>
+                                                                            </select>
+                                                                            <button type="submit" class="btn btn-sm btn-guinda">Actualizar</button>
+                                                                        </th:block>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+
+                            </th:block>
+                        </tbody>
+                    </table>
+                    <div th:if="${registrosDrive == null || registrosDrive.isEmpty()}" class="text-center p-5">
+                        <p class="text-muted">No hay recursos registrados.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+
+    <div class="modal fade" id="modalCompartir" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden;">
+                <div class="modal-header" style="background: linear-gradient(135deg, var(--color-guinda) 0%, var(--color-verde) 100%); color: white; border: none; padding: 20px 30px;">
+                    <h5 class="modal-title d-flex align-items-center">
+                        <span class="material-icons-round me-2">share</span> Compartir Recurso
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form th:action="@{/panel/compartir}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <input type="hidden" id="modalFileId" name="fileId" />
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark">Destinatarios</label>
+                            <textarea name="emails" class="form-control" rows="3" 
+                                placeholder="ejemplo@infotec.mx, gatito@gmail.com" required 
+                                style="border-radius: 12px; border: 2px solid #eee;"></textarea>
+                            <div class="form-text mt-2">Separe los correos electrónicos con comas.</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark">Nivel de Acceso</label>
+                            <select name="role" class="form-select" style="border-radius: 10px; border: 2px solid #eee;">
+                                <option value="reader">Lector (Solo ver)</option>
+                                <option value="commenter">Comentarista</option>
+                                <option value="writer">Editor (Puede modificar)</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-guinda btn-lg fw-bold rounded-pill">
+                                Enviar Invitaciones
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleConfigMenu(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('configSubmenu');
+            const arrow = document.getElementById('configArrow');
+            if (submenu.style.display === 'none') {
+                submenu.style.display = 'block';
+                arrow.innerText = 'expand_less';
+            } else {
+                submenu.style.display = 'none';
+                arrow.innerText = 'expand_more';
+            }
+        }
+
+        // Función para pasar el ID del archivo al modal antes de abrirlo
+        function prepararModal(btn) {
+            const fileId = btn.getAttribute('data-fileid');
+            document.getElementById('modalFileId').value = fileId;
+        }
+
+
+
+
+
+
+
+
+        function toggleConfigMenu(event) {
+            if(event) event.preventDefault();
+            const submenu = document.getElementById('configSubmenu');
+            const arrow = document.getElementById('configArrow');
+            
+            if (submenu.style.display === 'none') {
+                submenu.style.display = 'block';
+                arrow.textContent = 'expand_less';
+            } else {
+                submenu.style.display = 'none';
+                arrow.textContent = 'expand_more';
+            }
+        }
+
+        // Esto mantiene abierto el menú si estamos en una página de configuración
+        document.addEventListener("DOMContentLoaded", function() {
+            if (window.location.pathname.includes('/usuarios/')) {
+                const submenu = document.getElementById('configSubmenu');
+                if(submenu) submenu.style.display = 'block';
+            }
+        });
+
+
+
+
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

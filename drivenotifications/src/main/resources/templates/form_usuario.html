@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${usuario.id == null ? 'Nuevo Usuario | INFOTEC' : 'Editar Usuario | INFOTEC'}"></title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-guinda: #611232;
+            --color-guinda-claro: #801a42;
+            --color-dorado: #a57f2c;
+            --color-verde: #002f2a;
+            --color-fondo: #f0f2f5;
+            --color-texto-principal: #1a1f36;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-fondo);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        /* Reutilización de Sidebar */
+        .sidebar { width: var(--sidebar-width); background-color: white; display: flex; flex-direction: column; border-right: 1px solid #e6e8eb; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid #e6e8eb; text-align: center; }
+        .sidebar-logo { max-width: 150px; }
+        .sidebar-menu { padding: 20px 10px; flex-grow: 1; }
+        .menu-item { 
+            display: flex; align-items: center; padding: 12px 15px; color: #4f566b; 
+            text-decoration: none; border-radius: 10px; margin-bottom: 5px; font-weight: 500;
+        }
+        .menu-item.active { background-color: rgba(97, 18, 50, 0.08); color: var(--color-guinda); }
+        .menu-item .material-icons-round { margin-right: 12px; }
+
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        
+        /* Contenedor del Formulario */
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 600px;
+            margin: 40px auto;
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--color-verde) 0%, #004d45 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .form-body { padding: 40px; }
+
+        .form-floating > .form-control {
+            border-radius: 12px;
+            border: 2px solid #f0f2f5;
+        }
+
+        .form-floating > .form-control:focus {
+            border-color: var(--color-dorado);
+            box-shadow: 0 0 0 0.25rem rgba(165, 127, 44, 0.1);
+        }
+
+        .btn-save {
+            background: var(--color-guinda);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .btn-save:hover {
+            background: var(--color-guinda-claro);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(97, 18, 50, 0.3);
+            color: white;
+        }
+
+        .btn-back {
+            color: var(--color-texto-principal);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .btn-back:hover { color: var(--color-dorado); }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img th:src="@{/images/INFOTEC_horizontal.png}" alt="INFOTEC Logo" class="sidebar-logo">
+        </div>
+        <nav class="sidebar-menu">
+            <a th:href="@{/panel}" class="menu-item">
+                <span class="material-icons-round">dashboard</span> Panel Principal
+            </a>
+            <a th:href="@{/usuarios/listar}" class="menu-item active">
+                <span class="material-icons-round">group</span> Gestión de Usuarios
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="mt-4 ms-3">
+                <a th:href="@{/usuarios/listar}" class="btn-back">
+                    <span class="material-icons-round me-1">arrow_back</span> Regresar al listado
+                </a>
+            </div>
+
+            <div class="form-card">
+                <div class="form-header">
+                    <span class="material-icons-round fs-1 mb-2">person_add</span>
+                    <h2 class="h4 m-0" th:text="${usuario.id == null ? 'Registro de Nuevo Usuario' : 'Actualización de Usuario'}"></h2>
+                    <p class="small opacity-75 mb-0">Complete la información del colaborador institucional</p>
+                </div>
+
+                <div class="form-body">
+                    <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post">
+                        <input type="hidden" th:field="*{id}">
+                        
+                        <div class="form-floating mb-3">
+                            <input type="text" th:field="*{nombre}" class="form-control" id="nombreInput" placeholder="Nombre completo" required>
+                            <label for="nombreInput">Nombre Completo</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" th:field="*{puesto}" class="form-control" id="puestoInput" placeholder="Puesto" required>
+                            <label for="puestoInput">Puesto / Cargo Institucional</label>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input type="password" th:field="*{password}" class="form-control" id="passInput" placeholder="Password">
+                            <label for="passInput">Contraseña</label>
+                            <div class="form-text text-muted" th:if="${usuario.id != null}">
+                                <span class="material-icons-round align-middle fs-6">info</span> 
+                                Dejar en blanco si no desea cambiar la contraseña actual.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-save w-100 mb-3">
+                            <span class="material-icons-round align-middle me-2">save</span> Guardar Usuario
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

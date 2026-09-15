@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-DrivenotificationsApplication<drivenotifications>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.infotec.drivenotifications.DrivenotificationsApplication",
+            "projectName": "drivenotifications",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

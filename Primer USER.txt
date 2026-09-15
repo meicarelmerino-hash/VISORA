@@ -1,0 +1,6 @@
+TELEGRAM_TOKEN = "8754101959:AAEuG_eK6q3Qj0GxHztcBq4U9p3R17tD77U" 
+
+CHAT_ID = "-5172079117"
+
+
+INSERT INTO usuarios (fecha_creacion, nombre, password, puesto) VALUES (NOW(), 'mei', '$2a$10$1kCvTeoA7bUMFUBYUB5CVeuuWLw9PDPap13111nT8bZpKNDc4GoU6', 'Desarrolladora');

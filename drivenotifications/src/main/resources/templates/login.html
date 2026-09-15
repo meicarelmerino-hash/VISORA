@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VISORA - INFOTEC</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --guinda: #611232;
+            --dorado: #a57f2c;
+            --verde: #002f2a;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: url('/images/fondo_aguila.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .master-container {
+            width: 100%;
+            max-width: 950px;
+            height: 650px;
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        .side-branding {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(97, 18, 50, 0.85) 0%, rgba(0, 47, 42, 0.85) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            color: white;
+            text-align: center;
+        }
+
+        .side-branding .main-logo {
+            max-width: 160px;
+            margin-bottom: 30px;
+            filter: brightness(0) invert(1);
+        }
+
+        .side-branding h1 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        .side-branding .line {
+            width: 60px;
+            height: 5px;
+            background: var(--dorado);
+            margin: 25px 0;
+            border-radius: 10px;
+        }
+
+        .side-form {
+            flex: 1.2;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 40px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo-login-header {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        h2 { color: var(--verde); font-weight: 700; font-size: 1.8rem; margin-bottom: 5px; }
+        
+        .form-floating > .form-control {
+            border: none;
+            border-bottom: 2px solid #ddd;
+            border-radius: 0;
+            padding-left: 0;
+            font-weight: 600;
+        }
+
+        .form-floating > .form-control:focus { border-bottom-color: var(--guinda); box-shadow: none; }
+
+        .btn-entrar {
+            height: 55px;
+            background: var(--guinda);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-entrar:hover { background: var(--verde); transform: translateY(-3px); color: white; }
+
+        /* Estilos del Modal Personalizados */
+        .modal-content { border-radius: 20px; border: none; overflow: hidden; }
+        .modal-header { background: var(--verde); color: white; border: none; }
+        .author-card { text-align: center; padding: 20px; }
+        .author-name { color: var(--guinda); font-weight: 700; font-size: 1.4rem; margin-top: 10px; }
+        .author-job { color: var(--dorado); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+        .info-box { background: #f8f9fa; border-radius: 15px; padding: 15px; margin-top: 15px; font-size: 0.9rem; }
+        
+        .credits-link {
+            color: #a57f2c;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .credits-link:hover { color: var(--dorado); }
+
+        @media (max-width: 768px) {
+            .master-container { flex-direction: column; height: auto; margin: 20px; }
+        }
+
+
+        /* Evita que el texto de la contraseña se encime con el icono */
+        #p {
+            padding-right: 45px;
+        }
+
+        /* Quita el contorno azul de Bootstrap al hacer clic en el ojo */
+        #togglePassword:focus {
+            box-shadow: none;
+            outline: none;
+        }
+
+        #togglePassword i {
+            font-size: 1.2rem;
+            transition: 0.2s;
+        }
+
+        #togglePassword:hover i {
+            color: var(--guinda) !important;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="master-container">
+        <div class="side-branding">
+            <img th:src="@{/images/infotec_vertical.png}" alt="INFOTEC" class="main-logo">
+            <h1>VISORA | INFOTEC</h1>
+            <div class="line"></div>
+            <p style="font-weight: 300; font-size: 1.1rem;">
+              
+                Versioning, Inspection, and Security Observer for Remote Archives
+            </p>
+        </div>
+
+        <div class="side-form">
+            <img th:src="@{/images/visora.png}" alt="VISORA" class="logo-login-header">
+
+            <h2>Iniciar Sesión</h2>
+            <p style="color: #777; margin-bottom: 30px;">Ingresar sus datos para acceder</p>
+
+            <form th:action="@{/login}" method="post">
+                <div class="form-floating mb-3">
+                    <input type="text" name="username" class="form-control" id="u" placeholder="Usuario" required>
+                    <label for="u">USUARIO INSTITUCIONAL</label>
+                </div>
+
+
+
+                <div class="form-floating mb-4 position-relative">
+                    <input type="password" name="password" class="form-control" id="p" placeholder="Contraseña" required>
+                    <label for="p">CONTRASEÑA</label>
+                    <button type="button" id="togglePassword" class="btn position-absolute end-0 top-50 translate-middle-y border-0" style="z-index: 10; margin-right: 10px;">
+                        <i class="bi bi-eye-slash text-muted" id="toggleIcon"></i>
+                    </button>
+                </div>
+
+
+                <div class="d-grid">
+                    <button type="submit" class="btn-entrar">Acceder</button>
+                </div>
+            </form>
+
+            <div class="text-center mt-4">
+                <img th:src="@{/images/td_horizontal.png}" alt="TD" style="max-width:200px;"><br>
+                <span style="font-size: 10px; color: #1d1d1d;">© 2026 INFOTEC | V 1.0.0</span><br><br>
+                <a class="credits-link" data-bs-toggle="modal" data-bs-target="#creditsModal">
+                    <i class="bi bi-info-circle-fill"></i> Información de Autoría y Propiedad intelectual
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="creditsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title w-100 text-center fw-bold">Propiedad Intelectual</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body author-card">
+                    <div class="mb-3">
+                        <i class="bi bi-code-square" style="font-size: 3rem; color: var(--dorado);"></i>
+                    </div>
+                    <p class="px-3" style="font-size: 0.9rem; color: #555;">
+                        Este sistema de software web ha sido desarrollado como parte de las actividades profesionales realizadas en:
+                    </p>
+                    <h6 class="fw-bold mb-4" style="color: var(--verde);">INFOTEC</h6>
+                    
+                    <div class="author-job">Autora del Proyecto</div>
+                    <div class="author-name">Mei Carél Serrano Merino</div>
+                    <div class="mb-3 text-muted" style="font-size: 0.85rem;">Desarrolladora Jr.</div>
+
+                    <div class="info-box text-start">
+                        <div class="mb-2">
+                            <i class="bi bi-diagram-3-fill me-2" style="color: var(--guinda);"></i>
+                            <strong>Adscripción:</strong> <br>
+                            <span class="ms-4">Subgerencia de Innovación Gubernamental</span>
+                        </div>
+                        <div>
+                            <i class="bi bi-envelope-fill me-2" style="color: var(--guinda);"></i>
+                            <strong>Contacto:</strong> <br>
+                            <span class="ms-4"><a th:href="'mailto:mei.serrano@infotec.mx'" style="color: var(--verde); text-decoration: none;">mei.serrano@infotec.mx</a></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center" style="border: none;">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#p');
+        const icon = document.querySelector('#toggleIcon');
+
+        togglePassword.addEventListener('click', function (e) {
+            // Cambiar el tipo de input
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            
+            // Cambiar el icono
+            icon.classList.toggle('bi-eye');
+            icon.classList.toggle('bi-eye-slash');
+        });
+    </script>
+</body>
+</html>

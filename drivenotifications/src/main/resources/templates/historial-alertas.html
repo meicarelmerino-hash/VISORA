@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Alertas | INFOTEC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+
+    <style>
+
+
+
+
+
+
+        
+        :root {
+            --color-guinda: #611232;
+            --color-guinda-claro: #801a42;
+            --color-dorado: #a57f2c;
+            --color-verde: #002f2a;
+            --color-fondo: #f0f2f5;
+            --color-texto-principal: #1a1f36;
+            --color-texto-secundario: #4f566b;
+            --sidebar-width: 260px;
+        }
+
+        
+
+       
+       
+       /* CONTENEDOR PRINCIPAL DEL ASIDE */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width); /* Asegura un mínimo */
+            flex-shrink: 0; /* EVITA QUE SE COMPRIMA */
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e6e8eb;
+            z-index: 100;
+            height: 100vh;
+        }
+
+
+
+
+        /* CABECERA (LOGO) */
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e6e8eb;
+            text-align: center;
+        }
+
+        .sidebar-logo {
+            max-width: 150px;
+            height: auto;
+        }
+
+        /* CUERPO DEL MENÚ */
+        .sidebar-menu {
+            padding: 20px 10px;
+            flex-grow: 1;
+        }
+
+        /* ESTILO DE LOS ENLACES (ITEMS) */
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--color-texto-secundario);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-bottom: 5px;
+        }
+
+        /* EFECTO HOVER */
+        .menu-item:hover {
+            background-color: #f6f8fa;
+            color: var(--color-guinda);
+        }
+
+        /* ITEM ACTIVO */
+        .menu-item.active {
+            background-color: rgba(97, 18, 50, 0.08);
+            color: var(--color-guinda);
+            font-weight: 600;
+        }
+
+        /* ICONOS DENTRO DEL MENÚ */
+        .menu-item .material-icons-round {
+            margin-right: 12px;
+            font-size: 1.3rem;
+        }
+
+        /* SUBMENÚ DE CONFIGURACIÓN */
+        #configSubmenu {
+            padding-left: 30px;
+            background: #fbfcfd;
+        }
+
+        #configSubmenu .menu-item {
+            font-size: 0.85rem;
+        }
+
+        /* PIE DE PÁGINA DEL ASIDE */
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid #e6e8eb;
+            background-color: #fbfcfd;
+        }
+
+
+
+
+
+
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto-principal);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; font-weight: 800; }
+
+
+
+
+
+
+
+
+
+
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: scroll;
+    
+        }
+
+        .top-header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e6e8eb;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 1.4rem;
+            color: var(--color-verde);
+        }
+        .dashboard-wrapper {
+            padding: 30px;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /* ========================================================================
+        Estilos Mejorados de la Bitácora y Documentos (CORREGIDO)
+        ======================================================================== */
+
+        /* --- Panel Izquierdo: Lista de Documentos --- */
+        .seccion-titulo {
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            color: var(--color-texto-secundario);
+            margin-bottom: 1.5rem;
+            padding-left: 5px;
+        }
+
+        .lista-documentos-scroll {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Scrollbar estética */
+        .lista-documentos-scroll::-webkit-scrollbar { width: 5px; }
+        .lista-documentos-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .lista-documentos-scroll::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
+        .lista-documentos-scroll::-webkit-scrollbar-thumb:hover { background: var(--color-dorado); }
+
+        .card-archivo {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #eef0f2 !important;
+            border-left: 4px solid transparent !important;
+            margin-bottom: 10px;
+            border-radius: 12px !important;
+            background-color: white;
+        }
+
+        .card-archivo:hover {
+            background-color: #fdfdfd;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important;
+        }
+
+        .card-archivo.active {
+            border-left-color: var(--color-guinda) !important;
+            background-color: #fcf8f9 !important;
+            box-shadow: 0 4px 10px rgba(97, 18, 50, 0.1) !important;
+        }
+
+        /* --- Panel Derecho: Línea del Tiempo (Cronología) --- */
+
+        /* Contenedor que permite la línea vertical continua */
+        .timeline-wrapper {
+            position: relative;
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+        /* LA LÍNEA VERTICAL (Corregida) */
+        .timeline-wrapper::before {
+            content: '';
+            position: absolute;
+            left: 7px; /* Alineación central con el punto */
+            top: 5px;
+            bottom: 5px;
+            width: 2px;
+            background-color: #e9ecef;
+            z-index: 0;
+        }
+
+        /* Item individual */
+        .timeline-item {
+            position: relative;
+            padding-left: 35px; /* Espacio para el punto */
+            padding-bottom: 40px;
+            z-index: 1;
+        }
+
+        /* EL PUNTO DORADO (Corregido) */
+        .timeline-point {
+            position: absolute;
+            left: 0;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--color-dorado);
+            box-shadow: 0 0 0 3px rgba(165, 127, 44, 0.1);
+            z-index: 2;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        /* Insignias de prioridad con colores suaves */
+        .badge-prioridad {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            border-radius: 30px;
+        }
+        .bg-danger-soft { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.2); }
+        .bg-warning-soft { background-color: rgba(255, 193, 7, 0.15); color: #856404; border: 1px solid rgba(255, 193, 7, 0.3); }
+        .bg-info-soft { background-color: rgba(13, 202, 240, 0.1); color: #0aa2c0; border: 1px solid rgba(13, 202, 240, 0.2); }
+
+        /* Caja de análisis */
+        .analisis-box {
+            background: white;
+            border: 1px solid #eef0f2;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+        }
+
+        .analisis-box:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+            transform: translateX(5px);
+        }
+
+        .analisis-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--color-guinda-claro);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #f8f9fa;
+            padding-bottom: 8px;
+        }
+
+        .analisis-content {
+            color: var(--color-texto-principal);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        /* Estado vacío */
+        .state-empty {
+            background: white;
+            border-radius: 20px;
+            padding: 60px;
+            border: 2px dashed #e6e8eb;
+            text-align: center;
+        }
+
+        .fs-7 { font-size: 0.85rem; }
+        .fs-8 { font-size: 0.75rem; }
+
+
+
+
+
+
+
+
+
+
+
+
+    </style>
+</head>
+
+<body>
+
+
+
+
+
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img th:src="@{/images/INFOTEC_horizontal.png}" alt="INFOTEC Logo" class="sidebar-logo">
+        </div>
+        <nav class="sidebar-menu">
+            <a href="/panel" class="menu-item">
+                <span class="material-icons-round">dashboard</span>
+                Panel Principal
+            </a>
+            
+            <a href="#" class="menu-item">
+                <span class="material-icons-round">description</span>
+                Reportes Drive
+            </a>
+
+            <a th:href="@{/usuarios/listar}" class="menu-item">
+                <span class="material-icons-round">group</span>
+                Gestión de Usuarios
+            </a>
+            
+            
+
+
+            <a th:href="@{/historial-alertas}" class="menu-item active">
+                <span class="material-icons-round">notifications_active</span>
+                Historial Alertas
+            </a>
+
+
+
+
+            <a href="#" class="menu-item" id="configToggle" onclick="toggleConfigMenu(event)">
+                <span class="material-icons-round">settings</span>
+                Configuración
+                <span class="material-icons-round ms-auto" id="configArrow">expand_more</span>
+            </a>
+            <div id="configSubmenu" style="display: none; padding-left: 30px; background: #fbfcfd;">
+                <a th:href="@{/usuarios/mi-perfil}" class="menu-item" style="font-size: 0.85rem;">
+                    <span class="material-icons-round" style="font-size: 1.1rem;">person</span>
+                    Mi Perfil
+                </a>
+                <a th:href="@{/usuarios/configurar-telegram}" class="menu-item" style="font-size: 0.85rem;">
+                    <span class="material-icons-round" style="font-size: 1.1rem;">send</span>
+                    Telegram
+                </a>
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <img th:src="@{/images/td_horizontal.png}" alt="Transformación Digital" style="max-height: 25px;">
+        </div>
+    </aside>
+
+
+
+
+
+    <main class="main-content">
+        <header class="top-header">
+            <h1 class="page-title">Plataforma de Notificaciones NTF</h1>
+            
+            <div class="d-flex align-items-center ms-auto">
+                <div class="d-flex align-items-center me-4">
+                    <div class="text-end me-3 d-none d-md-block">
+                        <div class="fw-bold" style="font-size: 0.9rem; color: var(--color-guinda);" 
+                            th:text="${usuarioActivo != null ? usuarioActivo.nombre : 'Usuario'}">Usuario</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Sesión Activa</div>
+                    </div>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                        style="width: 40px; height: 40px; background-color: var(--color-guinda); color: white; border: 2px solid var(--color-dorado);">
+                        <span class="material-icons-round">person</span>
+                    </div>
+                </div>
+
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-outline-danger btn-sm d-flex align-items-center px-3 rounded-pill fw-bold">
+                        <span class="material-icons-round me-2" style="font-size: 1.1rem;">logout</span>
+                        Salir
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <div class="container-fluid p-3 p-md-4">
+            <div class="row g-4"> <div class="col-lg-4 col-md-5">
+                    <div class="fw-bold seccion-titulo text-uppercase">
+                        <span class="material-icons-round fs-6 align-middle me-1">snippet_folder</span>
+                        Recursos Disponibles
+                    </div>
+                    
+                    <div class="lista-documentos-scroll pe-2">
+                        <div class="list-group list-group-flush">
+                            <a th:each="doc : ${misArchivos}"
+                                th:href="@{/historial-alertas/detalles(fileId=${doc.driveId})}"
+                                class="list-group-item list-group-item-action p-3 card-archivo shadow-sm"
+                                th:classappend="${itemSeleccionado != null && itemSeleccionado.driveId == doc.driveId ? 'active' : ''}">
+                                
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-wrapper me-3 d-flex align-items-center justify-content-center rounded-3 p-2"
+                                         th:style="'background-color:' + (${doc.tipoDocumento == 'Carpeta'} ? 'rgba(230, 126, 34, 0.1)' : 'rgba(52, 152, 219, 0.1)')">
+                                        <span class="material-icons-round"
+                                            th:style="'color:' + (${doc.tipoDocumento == 'Carpeta'} ? '#e67e22' : '#3498db')">
+                                            <th:block th:text="${doc.tipoDocumento == 'Carpeta'} ? 'folder' : 'description'">description</th:block>
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <div class="doc-name text-truncate" th:text="${doc.nombreDocumento}">Nombre del Documento</div>
+                                        <div class="doc-id text-truncate text-muted fs-8" th:text="${doc.driveId}">ID: drive_id_example_123</div>
+                                    </div>
+                                    
+                                    <span th:if="${itemSeleccionado != null && itemSeleccionado.driveId == doc.driveId}" 
+                                          class="material-icons-round text-guinda ms-2 fs-5">chevron_right</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8 col-md-7">
+                    
+                    <div th:if="${itemSeleccionado == null}" class="state-empty shadow-sm mt-5">
+                        <span class="material-icons-round">analytics</span>
+                        <h4 class="fw-bold text-dark mt-3">Visualizador de Evolución</h4>
+                        <p class="text-secondary mx-auto" style="max-width: 400px;">
+                            Selecciona un recurso de la lista de la izquierda para desplegar la cronología detallada de cambios detectados por la Inteligencia Artificial.
+                        </p>
+                    </div>
+
+                    <div th:if="${itemSeleccionado != null}" class="ps-md-3">
+                        <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom">
+                            <h5 class="fw-bold m-0 d-flex align-items-center" style="color: var(--color-verde);">
+                                <span class="material-icons-round me-2 text-dorado">history_edu</span>
+                                Cronología de Cambios
+                            </h5>
+                            <div class="text-muted fs-7 bg-white px-3 py-1 rounded-pill border shadow-sm">
+                                Archivo: <strong class="text-dark" th:text="${itemSeleccionado.nombreDocumento}">Nombre</strong>
+                            </div>
+                        </div>
+
+                        <div th:if="${#lists.isEmpty(cambios)}" class="alert alert-light border-0 shadow-sm rounded-4 d-flex align-items-center p-4">
+                            <span class="material-icons-round text-info fs-2 me-3">info</span>
+                            <div>
+                                <h6 class="fw-bold text-dark m-0">Sin registros históricos</h6>
+                                <p class="text-secondary small m-0">No se han detectado modificaciones recientes en este documento.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-container">
+                            <div th:each="cambio : ${cambios}" class="timeline-item">
+                                <div class="timeline-point"></div>
+                                
+                                <div class="timeline-header">
+                                    <div class="d-flex align-items-center">
+                                        <span th:class="'badge badge-prioridad ' + 
+                                            (${cambio.prioridad == 'ALTA'} ? 'bg-danger-soft' : 
+                                            (${cambio.prioridad == 'MEDIA'} ? 'bg-warning-soft' : 'bg-info-soft'))"
+                                            th:text="${cambio.prioridad}">PRIORIDAD</span>
+                                        
+                                        <span class="ms-3 text-secondary fs-7 d-flex align-items-center">
+                                            <span class="material-icons-round fs-6 me-1 text-muted">person_outline</span>
+                                            Por: <strong class="text-dark ms-1" th:text="${cambio.autorCambio}">usuario@infotec.mx</strong>
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="badge bg-white text-muted border fw-normal rounded-pill px-3 py-2 shadow-sm fs-8 d-flex align-items-center">
+                                        <span class="material-icons-round me-1 fs-7">calendar_today</span>
+                                        <span th:text="${#temporals.format(cambio.fechaCambio, 'dd MMM yyyy, HH:mm')}">15 May 2024, 10:30</span>
+                                    </div>
+                                </div>
+
+                                <div class="analisis-box">
+                                    <div class="analisis-title">
+                                        <span class="material-icons-round fs-5 me-2">psychology</span>
+                                        Resumen de IA (Llama 3)
+                                    </div>
+                                    <div th:text="${cambio.analisisIa}" class="analisis-content">
+                                        Aquí se muestra el resumen detallado del cambio detectado en el documento...
+                                    </div>
+                                </div>
+                            </div> </div> </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+    <script>
+        function toggleConfigMenu(event) {
+            event.preventDefault(); // Evita que el enlace recargue la página
+
+            const submenu = document.getElementById('configSubmenu');
+            const arrow = document.getElementById('configArrow');
+
+            // Alternar visibilidad del submenú
+            if (submenu.style.display === 'none' || submenu.style.display === '') {
+                submenu.style.display = 'block';
+                arrow.textContent = 'expand_less'; // Cambia el icono de la flecha
+            } else {
+                submenu.style.display = 'none';
+                arrow.textContent = 'expand_more'; // Restaura el icono
+            }
+        }
+    </script>
+
+
+
+
+
+</body>
+
+</html>
